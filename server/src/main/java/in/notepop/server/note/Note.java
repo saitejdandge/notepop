@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -18,11 +18,13 @@ public class Note {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long noteId;
     private String value;
+    private LocalDate createdDate;
+    private LocalDate updatedDate;
 
     //    @OneToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "userId", referencedColumnName = "id")
 //    private User user;
 
     @Column(nullable = false)
-    private String userId;
+    private Long userId;
 }

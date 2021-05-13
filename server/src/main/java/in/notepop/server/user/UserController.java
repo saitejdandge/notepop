@@ -2,7 +2,6 @@ package in.notepop.server.user;
 
 
 import in.notepop.server.ResponseWrapper;
-import in.notepop.server.Status;
 import in.notepop.server.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +22,6 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseWrapper<Session> login(@RequestParam(value = "uniqueId", required = true) String uniqueId) {
-        return new ResponseWrapper<>(userService.login(uniqueId), 1, Status.SUCCESS);
+        return ResponseWrapper.success(userService.login(uniqueId));
     }
 }

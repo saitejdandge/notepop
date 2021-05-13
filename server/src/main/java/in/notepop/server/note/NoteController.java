@@ -1,7 +1,6 @@
 package in.notepop.server.note;
 
 import in.notepop.server.ResponseWrapper;
-import in.notepop.server.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,13 +21,30 @@ public class NoteController {
     }
 
     @RequestMapping("/createnote")
-    public ResponseWrapper<Note> createNote(@RequestBody Note note) {
-        return new ResponseWrapper<>(noteService.createNote(note), 1, Status.SUCCESS);
+    public ResponseWrapper<Note> createNote(@RequestHeader("accessToken") String accessToken, @RequestBody Note note) {
+        //todo map with jwt and userid
+        note.setUserId(Long.parseLong(accessToken));
+        return ResponseWrapper.success(noteService.createNote(note));
     }
 
     @RequestMapping("/getnotes")
     public ResponseWrapper<List<Note>> getNotes(@RequestHeader("accessToken") String accessToken) {
-        return new ResponseWrapper<>(noteService.getNotesOfUser(accessToken), 1, Status.SUCCESS);
+        try {
+            return ResponseWrapper.success(noteService.getNotesOfUser(accessToken));
+        } catch (Exception e) {
+            return ResponseWrapper.error(e.getLocalizedMessage());
+        }
+    }
+
+    @RequestMapping("/updatenote")
+    public ResponseWrapper<Note> updateNote(@RequestHeader("accessToken") String accessToken,
+                                            @RequestBody UpdateNoteRequest updateNoteRequest) {
+        try {
+            updateNoteRequest.setUserId(Long.parseLong(accessToken));
+            return ResponseWrapper.success(noteService.updateNote(updateNoteRequest));
+        } catch (Exception e) {
+            return ResponseWrapper.error(e.getLocalizedMessage());
+        }
     }
 
 
