@@ -19,7 +19,7 @@ public class UserController {
     }
 
     @PostMapping("/login/{uniqueId}")
-    public AppUser login(@PathVariable String uniqueId) {
+    public User login(@PathVariable String uniqueId) {
         return userService.login(uniqueId);
     }
 }

@@ -14,12 +14,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public AppUser login(String uniqueId) {
-        Optional<AppUser> appUser = userRepository.findByUniqueId(uniqueId);
+    public User login(String uniqueId) {
+        Optional<User> appUser = userRepository.findByUniqueId(uniqueId);
         if (appUser.isEmpty()) {
-            AppUser appUser1 = new AppUser(uniqueId);
-            userRepository.save(appUser1);
-            return appUser1;
+            User user1 = new User(uniqueId);
+            userRepository.save(user1);
+            return user1;
         } else {
             return appUser.get();
         }

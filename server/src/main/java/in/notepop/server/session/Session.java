@@ -1,7 +1,7 @@
 package in.notepop.server.session;
 
 
-import in.notepop.server.user.AppUser;
+import in.notepop.server.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,5 +26,5 @@ public class Session {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "id")
-    private AppUser appUser;
+    private User user;
 }

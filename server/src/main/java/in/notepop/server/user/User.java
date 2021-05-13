@@ -12,9 +12,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "app_user")
-public class AppUser {
+public class User {
 
-    AppUser(String uniqueId) {
+    User(String uniqueId) {
         this.uniqueId = uniqueId;
     }
 
