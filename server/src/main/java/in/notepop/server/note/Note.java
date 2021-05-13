@@ -1,6 +1,6 @@
 package in.notepop.server.note;
 
-import in.notepop.server.user.User;
+import in.notepop.server.user.AppUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,5 +21,5 @@ public class Note {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "id")
-    private User user;
+    private AppUser appUser;
 }
