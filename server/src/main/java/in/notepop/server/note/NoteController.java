@@ -1,10 +1,14 @@
 package in.notepop.server.note;
 
+import in.notepop.server.ResponseWrapper;
+import in.notepop.server.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/note")
@@ -18,13 +22,13 @@ public class NoteController {
     }
 
     @RequestMapping("/createnote")
-    public Note createNote(@RequestBody Note note) {
-        return noteService.createNote(note);
+    public ResponseWrapper<Note> createNote(@RequestBody Note note) {
+        return new ResponseWrapper<>(noteService.createNote(note), 1, Status.SUCCESS);
     }
 
     @RequestMapping("/getnotes")
-    public NotesResponse getNotes(@RequestHeader("accessToken") String accessToken) {
-        return new NotesResponse(noteService.getNotesOfUser(accessToken), 1);
+    public ResponseWrapper<List<Note>> getNotes(@RequestHeader("accessToken") String accessToken) {
+        return new ResponseWrapper<>(noteService.getNotesOfUser(accessToken), 1, Status.SUCCESS);
     }
 
 
