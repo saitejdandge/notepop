@@ -1,11 +1,11 @@
 package in.notepop.server.note;
 
-import in.notepop.server.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +19,10 @@ public class Note {
     private Long noteId;
     private String value;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", referencedColumnName = "id")
-    private User user;
+    //    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "userId", referencedColumnName = "id")
+//    private User user;
+
+    @Column(nullable = false)
+    private String userId;
 }

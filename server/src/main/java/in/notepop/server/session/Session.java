@@ -7,7 +7,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -18,8 +18,10 @@ public class Session {
 
     public Session() {
         expiry = LocalDate.of(2018, 12, 2);
-        refreshToken = new Date().getTime() + "";
-        accessToken = new Date().getTime() + "";
+        refreshToken = UUID.randomUUID().toString();
+
+        accessToken = UUID.randomUUID().toString();
+
     }
 
     @Id

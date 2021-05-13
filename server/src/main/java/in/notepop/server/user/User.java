@@ -13,11 +13,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "app_user")
 public class User {
-
-    User(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -25,4 +20,9 @@ public class User {
     private String userName;
 
     private String uniqueId;
+
+    User(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
 }
