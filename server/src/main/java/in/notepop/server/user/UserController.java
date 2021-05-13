@@ -1,6 +1,7 @@
 package in.notepop.server.user;
 
 
+import in.notepop.server.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,7 @@ public class UserController {
     }
 
     @PostMapping("/login/{uniqueId}")
-    public User login(@PathVariable String uniqueId) {
+    public Session login(@PathVariable String uniqueId) {
         return userService.login(uniqueId);
     }
 }
