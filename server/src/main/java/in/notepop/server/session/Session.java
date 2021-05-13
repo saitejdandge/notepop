@@ -19,6 +19,7 @@ public class Session {
     public Session() {
         expiry = LocalDate.of(2018, 12, 2);
         refreshToken = new Date().getTime() + "";
+        accessToken = new Date().getTime() + "";
     }
 
     @Id
@@ -28,6 +29,8 @@ public class Session {
     private LocalDate expiry;
 
     private String refreshToken;
+
+    private String accessToken;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "id")
