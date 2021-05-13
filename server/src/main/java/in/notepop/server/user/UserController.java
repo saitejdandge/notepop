@@ -18,8 +18,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/createuser")
-    public NormalUser createUser(@RequestBody NormalUser normalUser) {
-        return userService.createUser(normalUser);
+    @PostMapping("/login")
+    public User login(@RequestBody User user) {
+        return userService.createUser(user);
     }
 }
