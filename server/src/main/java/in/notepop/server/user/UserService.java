@@ -3,7 +3,6 @@ package in.notepop.server.user;
 import in.notepop.server.config.AuthRequest;
 import in.notepop.server.config.JwtUtil;
 import in.notepop.server.config.MyUserDetails;
-import in.notepop.server.config.MyUserDetailsService;
 import in.notepop.server.session.Session;
 import in.notepop.server.session.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,7 @@ public class UserService {
     private final SessionService sessionService;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
-    @Autowired
-    private MyUserDetailsService myUserDetailsService;
+
 
     @Autowired
     public UserService(UserRepository userRepository, SessionService sessionService, JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
