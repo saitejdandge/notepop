@@ -36,7 +36,8 @@ public class NoteService {
                 .findById(updateNoteRequest.getNoteId())
                 .orElseThrow(() -> new IllegalStateException("Notes is not found"));
 
-        if (userRepository.findById(updateNoteRequest.getUserId()).isPresent())
+        System.out.println(updateNoteRequest.getUserId());
+        if (userRepository.findByUniqueId(updateNoteRequest.getUserId()).isEmpty())
             throw new IllegalStateException("No User found");
 
         if (!note.getUserId().equals(updateNoteRequest.getUserId()))
@@ -46,7 +47,6 @@ public class NoteService {
             note.setValue(updateNoteRequest.getNewValue());
 
         note.setUpdatedDate(LocalDate.now());
-
-        return note;
+        return noteRepository.save(note);
     }
 }

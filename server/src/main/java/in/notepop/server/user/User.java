@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Data
 @AllArgsConstructor
@@ -14,15 +16,14 @@ import javax.persistence.*;
 @Table(name = "app_user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    private String userName;
-
     private String uniqueId;
 
-    User(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
+    private String roles;
+    private boolean active;
 
+    public User(String uniqueId) {
+        this.uniqueId = uniqueId;
+        this.active = true;
+        this.roles = "USER";
+    }
 }

@@ -20,11 +20,6 @@ public class Note {
     private String value;
     private LocalDate createdDate;
     private LocalDate updatedDate;
-
-    //    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "userId", referencedColumnName = "id")
-//    private User user;
-
     @Column(nullable = false)
-    private Long userId;
+    private String userId;
 }
