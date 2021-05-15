@@ -1,6 +1,11 @@
 package in.notepop.server.config;
 
+import in.notepop.server.acl.Roles;
+import in.notepop.server.constants.SecurityConstants;
+import in.notepop.server.filters.JWTAuthenticationFilter;
+import in.notepop.server.filters.JWTAuthorizationFilter;
 import in.notepop.server.session.SessionService;
+import in.notepop.server.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,8 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    /*Use different services based on the actor*/
     @Autowired
-    MyUserDetailsService userDetailsService;
+    UserService userDetailsService;
 
     @Autowired
     SessionService sessionService;
@@ -46,19 +52,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/admin").hasRole(Roles.ROLE_ADMIN)
+                .antMatchers("/user").hasAnyRole(Roles.ROLE_ADMIN, Roles.ROLE_USER)
                 .antMatchers(SecurityConstants.LOGIN_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), sessionService))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()))
-                // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//
-//        http.authorizeRequests()
-//                .antMatchers("/admin").hasRole("ADMIN")
-//                .antMatchers("/user").hasAnyRole("ADMIN", "USER")
-//                .antMatchers("/").permitAll()
-//                .and().formLogin();
+        //this disables session creation on Spring Security
     }
 
     @Override

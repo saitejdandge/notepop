@@ -1,4 +1,4 @@
-package in.notepop.server.config;
+package in.notepop.server.constants;
 
 public class SecurityConstants {
 

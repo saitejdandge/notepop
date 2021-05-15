@@ -1,7 +1,11 @@
-package in.notepop.server.config;
+package in.notepop.server.filters;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.google.gson.Gson;
+import in.notepop.server.ResponseWrapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static in.notepop.server.config.SecurityConstants.*;
+import static in.notepop.server.constants.SecurityConstants.*;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -27,15 +31,28 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String header = request.getHeader(HEADER_STRING);
-
-        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+        try {
+            if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
-            return;
+        } catch (Exception e) {
+            response.getWriter().write(new Gson().toJson(getErrorResponse(e)));
+            response.getWriter().flush();
         }
+    }
 
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        filterChain.doFilter(request, response);
+    private ResponseWrapper<Object> getErrorResponse(Exception e) {
+        if (e instanceof TokenExpiredException) {
+            return ResponseWrapper.error("Token expired", 401);
+        } else if (e instanceof JWTDecodeException) {
+            return ResponseWrapper.error("Invalid Token", 401);
+        } else {
+            return ResponseWrapper.error("Something went wrong", 401);
+        }
     }
 
     // Reads the JWT from the Authorization header, and then uses JWT to validate the token
@@ -53,7 +70,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 // new arraylist means authorities
                 return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
             }
-
             return null;
         }
 
