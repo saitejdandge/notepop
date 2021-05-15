@@ -4,10 +4,12 @@ import in.notepop.server.acl.RoleAndAuthoritiesMapping;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.persistence.MappedSuperclass;
 import java.util.Arrays;
 import java.util.List;
 
 @Data
+@MappedSuperclass
 public abstract class BaseActor {
 
     /*List of roles delimited by comma*/
