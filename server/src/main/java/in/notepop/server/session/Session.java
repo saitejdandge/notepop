@@ -21,6 +21,7 @@ public class Session {
     private Long id;
     private Timestamp expiry;
     private String refreshToken;
+    @Transient
     private String accessToken;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "uniqueId")
