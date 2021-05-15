@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import in.notepop.server.ResponseWrapper;
 import in.notepop.server.acl.Roles;
 import in.notepop.server.config.AuthRequest;
-import in.notepop.server.config.AuthResponse;
+import in.notepop.server.config.LoggedInUser;
 import in.notepop.server.constants.SecurityConstants;
 import in.notepop.server.session.Session;
 import in.notepop.server.session.SessionService;
@@ -65,7 +65,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             Authentication auth) throws IOException {
         if (auth.getPrincipal() instanceof User) {
             User principal = (User) auth.getPrincipal();
-            String token = getToken(new AuthResponse(principal.getUsername(), Roles.ROLE_USER));
+            String token = getToken(new LoggedInUser(principal.getUsername(), Roles.ROLE_USER));
             Session session = sessionService.createSession(token, token, principal, Roles.ROLE_USER);
             res.getWriter().write(new Gson().toJson(ResponseWrapper.success(session)));
             res.getWriter().flush();
@@ -75,9 +75,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
-    private String getToken(AuthResponse authResponse) {
+    private String getToken(LoggedInUser loggedInUser) {
         return JWT.create()
-                .withSubject(new Gson().toJson(authResponse))
+                .withSubject(new Gson().toJson(loggedInUser))
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes()));
     }

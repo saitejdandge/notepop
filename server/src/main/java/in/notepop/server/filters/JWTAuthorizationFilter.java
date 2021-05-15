@@ -7,7 +7,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.google.gson.Gson;
 import in.notepop.server.ResponseWrapper;
 import in.notepop.server.acl.RoleAndAuthoritiesMapping;
-import in.notepop.server.config.AuthResponse;
+import in.notepop.server.config.LoggedInUser;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -65,11 +65,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                     .build()
                     .verify(token.replace(TOKEN_PREFIX, ""))
                     .getSubject();
-            AuthResponse authResponse = new Gson().fromJson(parsedJwt, AuthResponse.class);
+            LoggedInUser loggedInUser = new Gson().fromJson(parsedJwt, LoggedInUser.class);
 
             if (parsedJwt != null) {
                 // new arraylist means authorities
-                return new UsernamePasswordAuthenticationToken(authResponse, null, RoleAndAuthoritiesMapping.getInstance().getAuthoritiesOfRole(authResponse.getRole()));
+                return new UsernamePasswordAuthenticationToken(loggedInUser, null, RoleAndAuthoritiesMapping.getInstance().getAuthoritiesOfRole(loggedInUser.getRole()));
             }
             return null;
         }

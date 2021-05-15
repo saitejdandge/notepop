@@ -1,9 +1,8 @@
 package in.notepop.server.note;
 
 import in.notepop.server.ResponseWrapper;
-import in.notepop.server.config.AuthResponse;
+import in.notepop.server.shared.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "note")
-public class NoteController {
+public class NoteController extends BaseController {
 
     private final NoteService noteService;
 
@@ -23,16 +22,14 @@ public class NoteController {
 
     @RequestMapping("/createnote")
     public ResponseWrapper<Note> createNote(@RequestBody Note note) {
-        AuthResponse principal = (AuthResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        note.setUserId(principal.getUsername());
+        note.setUserId(getLoggedInUserId());
         return ResponseWrapper.success(noteService.createNote(note));
     }
 
     @RequestMapping("/getnotes")
     public ResponseWrapper<List<Note>> getNotes() {
         try {
-            AuthResponse principal = (AuthResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return ResponseWrapper.success(noteService.getNotesOfUser(principal.getUsername()));
+            return ResponseWrapper.success(noteService.getNotesOfUser(getLoggedInUserId()));
         } catch (Exception e) {
             return ResponseWrapper.error(e.getLocalizedMessage());
         }
@@ -42,8 +39,7 @@ public class NoteController {
     public ResponseWrapper<Note> updateNote(
             @RequestBody UpdateNoteRequest updateNoteRequest) {
         try {
-            AuthResponse principal = (AuthResponse) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            updateNoteRequest.setUserId(principal.getUsername());
+            updateNoteRequest.setUserId(getLoggedInUserId());
             return ResponseWrapper.success(noteService.updateNote(updateNoteRequest));
         } catch (Exception e) {
             return ResponseWrapper.error(e.getLocalizedMessage());
