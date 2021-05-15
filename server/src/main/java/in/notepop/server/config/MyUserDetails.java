@@ -12,13 +12,11 @@ import java.util.stream.Collectors;
 
 public class MyUserDetails implements UserDetails {
 
-    private String userName;
-    private boolean active;
-    private List<GrantedAuthority> grantedAuthorities;
+    private List<SimpleGrantedAuthority> grantedAuthorities = null;
+    private User user;
 
     public MyUserDetails(User user) {
-        this.userName = user.getUniqueId();
-        this.active = user.isActive();
+        this.user = user;
         if (user.getRoles() != null)
             this.grantedAuthorities =
                     Arrays.stream(user.getRoles().split(","))
@@ -30,6 +28,10 @@ public class MyUserDetails implements UserDetails {
 
     }
 
+    public User getUser() {
+        return user;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return grantedAuthorities;
@@ -37,12 +39,12 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return userName;
+        return user != null ? user.getUniqueId() : null;
     }
 
     @Override
     public String getUsername() {
-        return userName;
+        return user != null ? user.getUniqueId() : null;
     }
 
     @Override
@@ -62,6 +64,6 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return active;
+        return user != null && user.isActive();
     }
 }

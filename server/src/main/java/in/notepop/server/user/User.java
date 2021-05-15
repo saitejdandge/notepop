@@ -17,7 +17,6 @@ import javax.persistence.Table;
 public class User {
     @Id
     private String uniqueId;
-
     private String roles;
     private boolean active;
 
