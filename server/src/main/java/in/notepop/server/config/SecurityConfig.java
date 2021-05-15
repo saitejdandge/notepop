@@ -30,16 +30,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         //set your config on the auth object
-//        auth.inMemoryAuthentication()
-//                .withUser("blah")
-//                .password("blah")
-//                .roles("USER")
-//                .and()
-//                .withUser("admin")
-//                .password("admin")
-//                .roles("ADMIN");
-        auth.userDetailsService(userDetailsService);
+        auth.authenticationProvider(adminAuthProvider())
+                .authenticationProvider(userAuthProvider());
+//        auth.userDetailsService(userDetailsService);
     }
+
+
+    @Bean
+    public UserAuthProvider userAuthProvider() {
+        return new UserAuthProvider(userDetailsService);
+    }
+
+    @Bean
+    public AdminAuthProvider adminAuthProvider() {
+        return new AdminAuthProvider(userDetailsService);
+    }
+
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {

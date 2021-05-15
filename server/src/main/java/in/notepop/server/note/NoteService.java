@@ -37,7 +37,7 @@ public class NoteService {
                 .orElseThrow(() -> new IllegalStateException("Notes is not found"));
 
         System.out.println(updateNoteRequest.getUserId());
-        if (userRepository.findByUniqueId(updateNoteRequest.getUserId()).isEmpty())
+        if (userRepository.findByUsername(updateNoteRequest.getUserId()).isEmpty())
             throw new IllegalStateException("No User found");
 
         if (!note.getUserId().equals(updateNoteRequest.getUserId()))

@@ -6,6 +6,8 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.google.gson.Gson;
 import in.notepop.server.ResponseWrapper;
+import in.notepop.server.acl.RoleAndAuthoritiesMapping;
+import in.notepop.server.config.AuthResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import static in.notepop.server.constants.SecurityConstants.*;
 
@@ -36,8 +37,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(getAuthentication(request));
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             response.getWriter().write(new Gson().toJson(getErrorResponse(e)));
@@ -61,14 +61,15 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         if (token != null) {
             // parse the token.
-            String user = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
+            String parsedJwt = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
                     .build()
                     .verify(token.replace(TOKEN_PREFIX, ""))
                     .getSubject();
+            AuthResponse authResponse = new Gson().fromJson(parsedJwt, AuthResponse.class);
 
-            if (user != null) {
+            if (parsedJwt != null) {
                 // new arraylist means authorities
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                return new UsernamePasswordAuthenticationToken(authResponse, null, RoleAndAuthoritiesMapping.getInstance().getAuthoritiesOfRole(authResponse.getRole()));
             }
             return null;
         }

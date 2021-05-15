@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import in.notepop.server.ResponseWrapper;
+import in.notepop.server.acl.Roles;
+import in.notepop.server.config.AuthRequest;
+import in.notepop.server.config.AuthResponse;
 import in.notepop.server.constants.SecurityConstants;
 import in.notepop.server.session.Session;
 import in.notepop.server.session.SessionService;
@@ -43,11 +46,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            User user = mapper.readValue(request.getInputStream(), User.class);
+            AuthRequest authRequest = mapper.readValue(request.getInputStream(), AuthRequest.class);
             return authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            user.getUniqueId(),
-                            user.getUniqueId(),
+                            authRequest.getUsername(),
+                            authRequest.getPassword() != null ? authRequest.getPassword() : authRequest.getUsername(),
                             new ArrayList<>())
             );
         } catch (IOException e) {
@@ -60,16 +63,21 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse res,
                                             FilterChain chain,
                                             Authentication auth) throws IOException {
-        User principal = (User) auth.getPrincipal();
-        String token = getToken(principal.getUsername());
-        Session session = sessionService.createSession(token, token, principal);
-        res.getWriter().write(new Gson().toJson(ResponseWrapper.success(session)));
-        res.getWriter().flush();
+        if (auth.getPrincipal() instanceof User) {
+            User principal = (User) auth.getPrincipal();
+            String token = getToken(new AuthResponse(principal.getUsername(), Roles.ROLE_USER));
+            Session session = sessionService.createSession(token, token, principal, Roles.ROLE_USER);
+            res.getWriter().write(new Gson().toJson(ResponseWrapper.success(session)));
+            res.getWriter().flush();
+        } else {
+            res.getWriter().write(new Gson().toJson(ResponseWrapper.success("Admin Authenticated successfully")));
+            res.getWriter().flush();
+        }
     }
 
-    private String getToken(String input) {
+    private String getToken(AuthResponse authResponse) {
         return JWT.create()
-                .withSubject(input)
+                .withSubject(new Gson().toJson(authResponse))
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes()));
     }

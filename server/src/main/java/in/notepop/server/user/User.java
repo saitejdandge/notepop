@@ -21,12 +21,12 @@ import java.util.Collection;
 public class User extends BaseActor implements UserDetails {
 
     @Id
-    private String uniqueId;
+    private String username;
 
 
     public User(String uniqueId) {
         super(Roles.ROLE_USER);
-        this.uniqueId = uniqueId;
+        this.username = uniqueId;
         this.active = true;
     }
 
@@ -37,13 +37,9 @@ public class User extends BaseActor implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.uniqueId;
+        return this.username;
     }
 
-    @Override
-    public String getUsername() {
-        return this.uniqueId;
-    }
 
     @Override
     public boolean isAccountNonExpired() {

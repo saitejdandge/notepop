@@ -23,8 +23,9 @@ public class Session {
     private String refreshToken;
     @Transient
     private String accessToken;
+    private String role;
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", referencedColumnName = "uniqueId")
+    @JoinColumn(name = "userId", referencedColumnName = "username")
     private User user;
 
 }
