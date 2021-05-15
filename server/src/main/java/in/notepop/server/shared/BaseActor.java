@@ -14,8 +14,9 @@ public abstract class BaseActor {
     protected String roles;
     protected boolean active;
 
-    protected BaseActor(String... roles) {
-
+    protected BaseActor(CharSequence... roles) {
+        if (roles != null)
+            this.roles = String.join(",", roles);
     }
 
     public List<GrantedAuthority> getGrantedAuthorities() {
