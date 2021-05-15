@@ -1,6 +1,8 @@
 package in.notepop.server.config;
 
 import in.notepop.server.acl.Roles;
+import in.notepop.server.auth_providers.AdminAuthProvider;
+import in.notepop.server.auth_providers.UserAuthProvider;
 import in.notepop.server.constants.SecurityConstants;
 import in.notepop.server.filters.JWTAuthenticationFilter;
 import in.notepop.server.filters.JWTAuthorizationFilter;

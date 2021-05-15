@@ -1,4 +1,4 @@
-package in.notepop.server.config;
+package in.notepop.server.auth_providers;
 
 import in.notepop.server.user.User;
 import in.notepop.server.user.UserService;

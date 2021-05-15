@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import in.notepop.server.ResponseWrapper;
-import in.notepop.server.acl.Roles;
 import in.notepop.server.config.AuthRequest;
 import in.notepop.server.config.LoggedInUser;
 import in.notepop.server.constants.SecurityConstants;
@@ -23,6 +22,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -63,16 +63,33 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse res,
                                             FilterChain chain,
                                             Authentication auth) throws IOException {
-        if (auth.getPrincipal() instanceof User) {
-            User principal = (User) auth.getPrincipal();
-            String token = getToken(new LoggedInUser(principal.getUsername(), Roles.ROLE_USER));
-            Session session = sessionService.createSession(token, token, principal, Roles.ROLE_USER);
-            res.getWriter().write(new Gson().toJson(ResponseWrapper.success(session)));
-            res.getWriter().flush();
-        } else {
-            res.getWriter().write(new Gson().toJson(ResponseWrapper.success("Admin Authenticated successfully")));
-            res.getWriter().flush();
+        User principal = (User) auth.getPrincipal();
+        String token = getToken(new LoggedInUser(principal.getUsername(), principal.getRoles()));
+        Session session = updateOrCreateSession(principal, token);
+        res.getWriter().write(new Gson().toJson(ResponseWrapper.success(session)));
+        res.getWriter().flush();
+
+    }
+
+    private Session updateOrCreateSession(User principal, String token) {
+        Session session;
+        session = sessionService.findByUserId(principal.getUsername());
+        //one hour expiry
+        Session newSession = new Session.SessionBuilder()
+                .accessToken(token)
+                //10 hour expiry
+                .refreshToken(token)
+                .role(principal.getRolesWithComma())
+                .userType(principal.getUserType())
+                .expiry(new Timestamp(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10).getTime()))
+                .user(principal)
+                .build();
+
+        /*Existing session record*/
+        if (session != null) {
+            newSession.setId(session.getId());
         }
+        return sessionService.save(newSession);
     }
 
     private String getToken(LoggedInUser loggedInUser) {

@@ -1,5 +1,6 @@
-package in.notepop.server.config;
+package in.notepop.server.auth_providers;
 
+import in.notepop.server.user.User;
 import in.notepop.server.user.UserService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,8 +22,8 @@ public class AdminAuthProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String credentials = (String) authentication.getCredentials();
         try {
-            boolean result = userService.loginAdmin(username, credentials);
-            authToken = new UsernamePasswordAuthenticationToken(username, credentials, new ArrayList<>());
+            userService.loginAdmin(username, credentials);
+            authToken = new UsernamePasswordAuthenticationToken(User.getAdminUser(username), null, new ArrayList<>());
         } catch (Exception e) {
             return null;
         }

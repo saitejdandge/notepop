@@ -5,13 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.security.Principal;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoggedInUser implements Principal {
     private String username;
-    private String role;
+    private List<String> role;
 
     @Override
     public String getName() {

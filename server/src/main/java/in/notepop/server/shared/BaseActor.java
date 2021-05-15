@@ -21,6 +21,14 @@ public abstract class BaseActor {
             this.roles = String.join(",", roles);
     }
 
+    public String getRolesWithComma() {
+
+        if (roles != null)
+            return String.join(",", roles);
+        else
+            return null;
+    }
+
     public List<GrantedAuthority> getGrantedAuthorities() {
         return RoleAndAuthoritiesMapping
                 .getInstance()

@@ -1,5 +1,6 @@
 package in.notepop.server.user;
 
+import in.notepop.server.constants.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ public class UserService {
         Optional<User> user = userRepository.findByUsername(username);
         User userObj;
         if (user.isEmpty()) {
-            userObj = new User(username);
+            userObj = User.getNormalUser(username);
             userRepository.save(userObj);
         } else {
             userObj = user.get();
@@ -23,7 +24,7 @@ public class UserService {
     }
 
     public boolean loginAdmin(String username, String password) throws UsernameNotFoundException {
-        if (username.equals("admin") && password.equals("heeraj"))
+        if (username.equals(SecurityConstants.ADMIN_USER_NAME) && password.equals(SecurityConstants.ADMIN_PASSWORD))
             return true;
         throw new UsernameNotFoundException("Admin failed");
     }

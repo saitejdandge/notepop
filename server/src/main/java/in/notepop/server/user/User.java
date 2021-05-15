@@ -22,12 +22,21 @@ public class User extends BaseActor implements UserDetails {
 
     @Id
     private String username;
+    private String userType;
 
-
-    public User(String uniqueId) {
-        super(Roles.ROLE_USER);
+    private User(String uniqueId, String userType, String... roles) {
+        super(roles);
+        this.userType = userType;
         this.username = uniqueId;
         this.active = true;
+    }
+
+    public static User getNormalUser(String username) {
+        return new User(username, User.UserType.NORMAL_USER, Roles.ROLE_USER);
+    }
+
+    public static User getAdminUser(String username) {
+        return new User(username, User.UserType.ADMIN, Roles.ROLE_ADMIN, Roles.ROLE_USER);
     }
 
     @Override
@@ -62,4 +71,13 @@ public class User extends BaseActor implements UserDetails {
     }
 
 
+    public class UserType {
+        private UserType() {
+
+        }
+
+        public static final String NORMAL_USER = "NORMAL_USER";
+        public static final String ADMIN = "ADMIN";
+        public static final String MERCHANT = "MERCHANT";
+    }
 }

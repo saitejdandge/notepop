@@ -26,7 +26,7 @@ public class BaseController {
 
     protected String getPrincipalRole() {
         LoggedInUser principal = getPrincipal();
-        return principal != null ? principal.getRole() : null;
+        return principal != null && principal.getRole() != null ? principal.getRole().get(0) : null;
     }
 
     protected Collection<? extends GrantedAuthority> getLoggedInUserAuthorities() {
