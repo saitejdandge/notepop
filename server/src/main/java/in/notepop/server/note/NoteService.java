@@ -1,5 +1,7 @@
 package in.notepop.server.note;
 
+import in.notepop.server.exceptions.BaseException;
+import in.notepop.server.exceptions.ErrorCodes;
 import in.notepop.server.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class NoteService {
@@ -26,7 +29,8 @@ public class NoteService {
     }
 
     public List<Note> getNotesOfUser(String userId) {
-        return noteRepository.findNotesByUserId(userId).get();
+        Optional<List<Note>> notes = noteRepository.findNotesByUserId(userId);
+        return notes.orElse(null);
     }
 
     //manages data through the object
@@ -34,14 +38,13 @@ public class NoteService {
 
         Note note = noteRepository
                 .findById(updateNoteRequest.getNoteId())
-                .orElseThrow(() -> new IllegalStateException("Notes is not found"));
+                .orElseThrow(() -> new BaseException(ErrorCodes.NOTES_NOT_FOUND));
 
-        System.out.println(updateNoteRequest.getUserId());
         if (userRepository.findByUsername(updateNoteRequest.getUserId()).isEmpty())
-            throw new IllegalStateException("No User found");
+            throw new BaseException(ErrorCodes.NO_USER_FOUND);
 
         if (!note.getUserId().equals(updateNoteRequest.getUserId()))
-            throw new IllegalStateException("Access Denied");
+            throw new BaseException(ErrorCodes.UNAUTHORIZED_ACCESS);
 
         if (updateNoteRequest.getNewValue() != null && updateNoteRequest.getNewValue().length() > 0 && !Objects.equals(updateNoteRequest.getNewValue(), note.getValue()))
             note.setValue(updateNoteRequest.getNewValue());

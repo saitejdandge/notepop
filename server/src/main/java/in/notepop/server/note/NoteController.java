@@ -1,6 +1,6 @@
 package in.notepop.server.note;
 
-import in.notepop.server.ResponseWrapper;
+import in.notepop.server.responses.ResponseWrapper;
 import in.notepop.server.shared.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,23 +28,14 @@ public class NoteController extends BaseController {
 
     @RequestMapping("/getnotes")
     public ResponseWrapper<List<Note>> getNotes() {
-        try {
-            return ResponseWrapper.success(noteService.getNotesOfUser(getLoggedInUserId()));
-        } catch (Exception e) {
-            return ResponseWrapper.error(e.getLocalizedMessage());
-        }
+        return ResponseWrapper.success(noteService.getNotesOfUser(getLoggedInUserId()));
     }
 
     @RequestMapping("/updatenote")
     public ResponseWrapper<Note> updateNote(
             @RequestBody UpdateNoteRequest updateNoteRequest) {
-        try {
-            updateNoteRequest.setUserId(getLoggedInUserId());
-            return ResponseWrapper.success(noteService.updateNote(updateNoteRequest));
-        } catch (Exception e) {
-            return ResponseWrapper.error(e.getLocalizedMessage());
-        }
+        updateNoteRequest.setUserId(getLoggedInUserId());
+        return ResponseWrapper.success(noteService.updateNote(updateNoteRequest));
+
     }
-
-
 }

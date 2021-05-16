@@ -1,5 +1,6 @@
-package in.notepop.server;
+package in.notepop.server.responses;
 
+import in.notepop.server.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,14 +17,5 @@ public class ResponseWrapper<T> {
     public static <T> ResponseWrapper<T> success(T data) {
         return new ResponseWrapper<>(data, 1, Status.SUCCESS, "success");
     }
-
-    public static <T> ResponseWrapper<T> error(String errorMessage, int statusCode) {
-        return new ResponseWrapper<>(null, statusCode, Status.FAILED, errorMessage);
-    }
-
-    public static <T> ResponseWrapper<T> error(String errorMessage) {
-        return error(errorMessage, 0);
-    }
-
 }
 

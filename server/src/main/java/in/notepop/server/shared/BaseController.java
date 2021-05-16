@@ -18,9 +18,6 @@ public class BaseController {
     }
 
     protected String getLoggedInUserId() {
-        String role = getPrincipalRole();
-        Collection<? extends GrantedAuthority> list = getLoggedInUserAuthorities();
-        LoggedInUser p = getPrincipal();
         return getAuthentication().getName();
     }
 

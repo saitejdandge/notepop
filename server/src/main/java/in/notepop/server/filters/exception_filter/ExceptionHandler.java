@@ -1,5 +1,6 @@
 package in.notepop.server.filters.exception_filter;
 
+import in.notepop.server.Status;
 import in.notepop.server.exceptions.BaseException;
 import in.notepop.server.exceptions.ErrorCodes;
 import lombok.Data;
@@ -32,12 +33,16 @@ public class ExceptionHandler {
         private final String message;
         private final int opStatus, statusCode;
         private final ZonedDateTime timestamp;
+        private final Status status;
+        private final int result;
 
         public ErrorResponse(ErrorCodes errorCode) {
             this.timestamp = ZonedDateTime.now(ZoneId.of("Z"));
             this.message = errorCode.getMessage();
             this.statusCode = errorCode.getStatusCode();
             this.opStatus = errorCode.getOpStatus();
+            this.status = Status.FAILED;
+            this.result = 0;
         }
 
     }

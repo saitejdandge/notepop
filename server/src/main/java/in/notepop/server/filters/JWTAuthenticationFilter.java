@@ -5,7 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import in.notepop.server.ResponseWrapper;
+import in.notepop.server.responses.ResponseWrapper;
 import in.notepop.server.config.AuthRequest;
 import in.notepop.server.config.LoggedInUser;
 import in.notepop.server.constants.SecurityConstants;
