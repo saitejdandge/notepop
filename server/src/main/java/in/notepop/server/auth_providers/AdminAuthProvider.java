@@ -21,8 +21,8 @@ public class AdminAuthProvider implements AuthenticationProvider {
         UsernamePasswordAuthenticationToken authToken = null;
         String username = authentication.getName();
         String credentials = (String) authentication.getCredentials();
-        userService.loginAdmin(username, credentials);
-        authToken = new UsernamePasswordAuthenticationToken(User.getAdminUser(username), null, new ArrayList<>());
+        if (userService.loginAdmin(username, credentials))
+            authToken = new UsernamePasswordAuthenticationToken(User.getAdminUser(username), null, new ArrayList<>());
         return authToken;
     }
 

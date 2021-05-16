@@ -10,10 +10,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Component
 public class ExceptionFilter extends OncePerRequestFilter {
@@ -27,8 +25,7 @@ public class ExceptionFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain)
-            throws ServletException, IOException {
+                                    @NonNull FilterChain filterChain) {
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e) {

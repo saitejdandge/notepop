@@ -30,12 +30,14 @@ public class UserService {
         return userObj;
     }
 
-    public void loginAdmin(String username, String password) throws UsernameNotFoundException {
+    public boolean loginAdmin(String username, String password) throws UsernameNotFoundException {
 
         if (username.equals(SecurityConstants.ADMIN_USER_NAME) && password.equals(SecurityConstants.ADMIN_PASSWORD))
-            return;
+            return true;
         if (username.equals(SecurityConstants.ADMIN_USER_NAME))
             throw new BaseException(ErrorCodes.INVALID_ADMIN_CREDS);
+
+        return false;
     }
 
 }
