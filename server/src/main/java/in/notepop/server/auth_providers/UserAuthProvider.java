@@ -6,8 +6,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import java.util.ArrayList;
-
 public class UserAuthProvider implements AuthenticationProvider {
     private final UserService userService;
 
@@ -19,8 +17,7 @@ public class UserAuthProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) {
         String username = authentication.getName();
         User userObject = userService.createUser(username);
-        //todo check the authoritiees
-        return new UsernamePasswordAuthenticationToken(userObject, userObject.getUsername(), new ArrayList<>());
+        return new UsernamePasswordAuthenticationToken(userObject, userObject.getUsername(), userObject.getGrantedAuthorities());
     }
 
     @Override

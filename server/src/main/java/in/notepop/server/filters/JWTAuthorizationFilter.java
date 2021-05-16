@@ -56,8 +56,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 LoggedInUser loggedInUser = new Gson().fromJson(parsedJwt, LoggedInUser.class);
 
                 if (parsedJwt != null) {
-                    // new arraylist means authorities
-                    return new UsernamePasswordAuthenticationToken(loggedInUser, null, RoleAndAuthoritiesMapping.getInstance().getAuthoritiesOfRole(loggedInUser.getRole()));
+                    return new UsernamePasswordAuthenticationToken(loggedInUser, null,
+                            RoleAndAuthoritiesMapping.getInstance().getAuthoritiesOfRole(loggedInUser.getRole()));
                 }
                 return null;
             }
