@@ -5,11 +5,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import in.notepop.server.config.AuthRequest;
 import in.notepop.server.config.LoggedInUser;
 import in.notepop.server.constants.SecurityConstants;
 import in.notepop.server.exceptions.BaseException;
 import in.notepop.server.exceptions.ErrorCodes;
+import in.notepop.server.requests.AuthRequest;
 import in.notepop.server.responses.ResponseWrapper;
 import in.notepop.server.session.Session;
 import in.notepop.server.session.SessionService;
@@ -24,11 +24,10 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
-
-import static in.notepop.server.constants.SecurityConstants.EXPIRATION_TIME;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -87,14 +86,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private Session updateOrCreateSession(User principal, String token) {
         Session session;
         session = sessionService.findByUserId(principal.getUsername());
-        //one hour expiry
         Session newSession = new Session.SessionBuilder()
                 .accessToken(token)
                 //10 hour expiry
                 .refreshToken(token)
                 .role(principal.getRolesWithComma())
                 .userType(principal.getUserType())
-                .expiry(new Timestamp(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10).getTime()))
+                .expiry(ZonedDateTime.now(ZoneId.of(SecurityConstants.TIMEZONE)).plusMinutes(SecurityConstants.EXPIRATION_IN_MINUTES))
                 .user(principal)
                 .build();
 
@@ -108,7 +106,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private String getToken(LoggedInUser loggedInUser) {
         return JWT.create()
                 .withSubject(new Gson().toJson(loggedInUser))
-                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .withExpiresAt(new Date(System.currentTimeMillis() + (SecurityConstants.EXPIRATION_IN_MINUTES * 60 * 1000)))
                 .sign(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes()));
     }
 }

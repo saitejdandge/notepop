@@ -1,4 +1,4 @@
-package in.notepop.server.note;
+package in.notepop.server.requests;
 
 import lombok.Data;
 

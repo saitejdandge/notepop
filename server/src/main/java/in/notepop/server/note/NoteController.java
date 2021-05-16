@@ -1,5 +1,6 @@
 package in.notepop.server.note;
 
+import in.notepop.server.requests.UpdateNoteRequest;
 import in.notepop.server.responses.ResponseWrapper;
 import in.notepop.server.shared.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;

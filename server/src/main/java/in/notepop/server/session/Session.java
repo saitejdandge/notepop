@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +19,7 @@ public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Timestamp expiry;
+    private ZonedDateTime expiry;
     private String refreshToken;
     private String accessToken;
     private String role;
@@ -30,7 +30,7 @@ public class Session {
 
     public static class SessionBuilder {
         private Long id;
-        private Timestamp expiry;
+        private ZonedDateTime expiry;
         private String refreshToken;
         private String accessToken;
         private String role;
@@ -43,7 +43,7 @@ public class Session {
         }
 
 
-        public SessionBuilder expiry(Timestamp expiry) {
+        public SessionBuilder expiry(ZonedDateTime expiry) {
             this.expiry = expiry;
             return this;
         }

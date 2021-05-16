@@ -2,6 +2,7 @@ package in.notepop.server.note;
 
 import in.notepop.server.exceptions.BaseException;
 import in.notepop.server.exceptions.ErrorCodes;
+import in.notepop.server.requests.UpdateNoteRequest;
 import in.notepop.server.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

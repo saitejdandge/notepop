@@ -1,6 +1,7 @@
 package in.notepop.server.filters.exception_filter;
 
 import in.notepop.server.Status;
+import in.notepop.server.constants.SecurityConstants;
 import in.notepop.server.exceptions.BaseException;
 import in.notepop.server.exceptions.ErrorCodes;
 import lombok.Data;
@@ -37,7 +38,7 @@ public class ExceptionHandler {
         private final int result;
 
         public ErrorResponse(ErrorCodes errorCode) {
-            this.timestamp = ZonedDateTime.now(ZoneId.of("Z"));
+            this.timestamp = ZonedDateTime.now(ZoneId.of(SecurityConstants.TIMEZONE));
             this.message = errorCode.getMessage();
             this.statusCode = errorCode.getStatusCode();
             this.opStatus = errorCode.getOpStatus();

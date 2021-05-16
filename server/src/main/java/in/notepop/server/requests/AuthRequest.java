@@ -1,4 +1,4 @@
-package in.notepop.server.config;
+package in.notepop.server.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
