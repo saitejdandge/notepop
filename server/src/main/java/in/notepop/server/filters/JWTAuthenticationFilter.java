@@ -9,10 +9,11 @@ import in.notepop.server.ResponseWrapper;
 import in.notepop.server.config.AuthRequest;
 import in.notepop.server.config.LoggedInUser;
 import in.notepop.server.constants.SecurityConstants;
+import in.notepop.server.exceptions.BaseException;
+import in.notepop.server.exceptions.ErrorCodes;
 import in.notepop.server.session.Session;
 import in.notepop.server.session.SessionService;
 import in.notepop.server.user.User;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -41,9 +42,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         setFilterProcessesUrl(SecurityConstants.LOGIN_URL);
     }
 
+
     @Override
-    public Authentication attemptAuthentication(@NonNull HttpServletRequest request,
-                                                @NonNull HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request,
+                                                HttpServletResponse response)
+            throws AuthenticationException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         AuthRequest authRequest = null;
@@ -62,15 +65,23 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void successfulAuthentication(@NonNull HttpServletRequest req,
-                                            @NonNull HttpServletResponse res,
-                                            @NonNull FilterChain chain,
-                                            @NonNull Authentication auth) throws IOException {
+    protected void successfulAuthentication(HttpServletRequest req,
+                                            HttpServletResponse res,
+                                            FilterChain chain,
+                                            Authentication auth) throws IOException {
         User principal = (User) auth.getPrincipal();
         String token = getToken(new LoggedInUser(principal.getUsername(), principal.getRoles()));
         Session session = updateOrCreateSession(principal, token);
         res.getWriter().write(new Gson().toJson(ResponseWrapper.success(session)));
         res.getWriter().flush();
+    }
+
+    /*Will be called if any of the auth providers throw AuthenticationException*/
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request,
+                                              HttpServletResponse response,
+                                              AuthenticationException failed) {
+        throw new BaseException(ErrorCodes.STANDARD_ERROR);
     }
 
     private Session updateOrCreateSession(User principal, String token) {

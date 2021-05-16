@@ -5,7 +5,6 @@ import in.notepop.server.user.UserService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 
 import java.util.ArrayList;
 
@@ -17,7 +16,7 @@ public class AdminAuthProvider implements AuthenticationProvider {
     }
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) {
         UsernamePasswordAuthenticationToken authToken = null;
         String username = authentication.getName();
         String credentials = (String) authentication.getCredentials();

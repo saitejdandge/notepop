@@ -30,7 +30,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         String header = request.getHeader(HEADER_STRING);
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
             filterChain.doFilter(request, response);
@@ -38,7 +40,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         }
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(request));
         filterChain.doFilter(request, response);
-
     }
 
     // Reads the JWT from the Authorization header, and then uses JWT to validate the token
