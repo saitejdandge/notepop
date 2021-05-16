@@ -12,6 +12,7 @@ import in.notepop.server.constants.SecurityConstants;
 import in.notepop.server.session.Session;
 import in.notepop.server.session.SessionService;
 import in.notepop.server.user.User;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -41,34 +42,35 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public Authentication attemptAuthentication(@NonNull HttpServletRequest request,
+                                                @NonNull HttpServletResponse response) throws AuthenticationException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        AuthRequest authRequest = null;
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            AuthRequest authRequest = mapper.readValue(request.getInputStream(), AuthRequest.class);
-            return authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            authRequest.getUsername(),
-                            authRequest.getPassword() != null ? authRequest.getPassword() : authRequest.getUsername(),
-                            new ArrayList<>())
-            );
+            authRequest = mapper.readValue(request.getInputStream(), AuthRequest.class);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return null;
         }
+        return authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        authRequest.getUsername(),
+                        authRequest.getPassword() != null ? authRequest.getPassword() : authRequest.getUsername(),
+                        new ArrayList<>())
+        );
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest req,
-                                            HttpServletResponse res,
-                                            FilterChain chain,
-                                            Authentication auth) throws IOException {
+    protected void successfulAuthentication(@NonNull HttpServletRequest req,
+                                            @NonNull HttpServletResponse res,
+                                            @NonNull FilterChain chain,
+                                            @NonNull Authentication auth) throws IOException {
         User principal = (User) auth.getPrincipal();
         String token = getToken(new LoggedInUser(principal.getUsername(), principal.getRoles()));
         Session session = updateOrCreateSession(principal, token);
         res.getWriter().write(new Gson().toJson(ResponseWrapper.success(session)));
         res.getWriter().flush();
-
     }
 
     private Session updateOrCreateSession(User principal, String token) {
@@ -98,5 +100,4 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes()));
     }
-    //todo handle failure authentication
 }

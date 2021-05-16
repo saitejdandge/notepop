@@ -6,6 +6,7 @@ import in.notepop.server.auth_providers.UserAuthProvider;
 import in.notepop.server.constants.SecurityConstants;
 import in.notepop.server.filters.JWTAuthenticationFilter;
 import in.notepop.server.filters.JWTAuthorizationFilter;
+import in.notepop.server.filters.exception_filter.ExceptionFilter;
 import in.notepop.server.session.SessionService;
 import in.notepop.server.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -28,13 +30,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     SessionService sessionService;
 
+    @Autowired
+    private ExceptionFilter exceptionFilter;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         //set your config on the auth object
         auth.authenticationProvider(adminAuthProvider())
                 .authenticationProvider(userAuthProvider());
-//        auth.userDetailsService(userDetailsService);
     }
 
 
@@ -58,13 +61,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     /*Authorization*/
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.csrf()
+                .disable()
                 .authorizeRequests()
                 .antMatchers("/admin").hasRole(Roles.ROLE_ADMIN)
                 .antMatchers("/user").hasAnyRole(Roles.ROLE_ADMIN, Roles.ROLE_USER)
                 .antMatchers(SecurityConstants.LOGIN_URL).permitAll()
+                .antMatchers("/").permitAll()
                 .anyRequest().authenticated()
                 .and()
+                .addFilterBefore(exceptionFilter, LogoutFilter.class)
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), sessionService))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

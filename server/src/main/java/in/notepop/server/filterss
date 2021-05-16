@@ -1,0 +1,15 @@
+[
+WebAsyncManagerIntegrationFilter@3e8fe7db,
+SecurityContextPersistenceFilter@5008559a,
+HeaderWriterFilter@f5f8de2,
+ExceptionHandlerFilter@56e8a8a0,
+LogoutFilter@61b76a7d,
+JWTAuthenticationFilter@62e586a6,
+JWTAuthorizationFilter@64908ab9,
+RequestCacheAwareFilter@490fbeaa,
+SecurityContextHolderAwareRequestFilter@677c2820,
+AnonymousAuthenticationFilter@1b06dc57,
+SessionManagementFilter@1002b06d,
+ExceptionTranslationFilter@68f264bf,
+FilterSecurityInterceptor@75fa9254
+]

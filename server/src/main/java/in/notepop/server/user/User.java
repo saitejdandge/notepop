@@ -72,12 +72,11 @@ public class User extends BaseActor implements UserDetails {
 
 
     public class UserType {
-        private UserType() {
-
-        }
-
         public static final String NORMAL_USER = "NORMAL_USER";
         public static final String ADMIN = "ADMIN";
         public static final String MERCHANT = "MERCHANT";
+        private UserType() {
+
+        }
     }
 }
